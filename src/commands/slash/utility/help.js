@@ -8,21 +8,40 @@ const {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("help")
-    .setDescription("Show help menu"),
+    .setDescription("Show bot help menu"),
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setColor(0x5865F2)
       .setTitle("📖 Help Menu")
-      .setDescription("اختار قسم من القائمة 👇");
+      .setDescription(
+        "أهلاً بيك 👋\n" +
+        "اختار قسم من القائمة تحت علشان تشوف الأوامر 👇"
+      )
+      .setFooter({ text: "Music Bot • Help" });
 
     const menu = new StringSelectMenuBuilder()
       .setCustomId("help_menu")
-      .setPlaceholder("Select Category")
+      .setPlaceholder("📂 اختر قسم")
       .addOptions([
-        { label: "Music", value: "music", emoji: "🎵" },
-        { label: "Admin", value: "admin", emoji: "🛠️" },
-        { label: "Utility", value: "utility", emoji: "⚙️" }
+        {
+          label: "Music Commands",
+          value: "music",
+          description: "تشغيل والتحكم في الميوزك",
+          emoji: "🎵"
+        },
+        {
+          label: "Admin Commands",
+          value: "admin",
+          description: "إعدادات وتحكم الأدمن",
+          emoji: "🛠️"
+        },
+        {
+          label: "Utility Commands",
+          value: "utility",
+          description: "أوامر عامة ومساعدة",
+          emoji: "⚙️"
+        }
       ]);
 
     const row = new ActionRowBuilder().addComponents(menu);
