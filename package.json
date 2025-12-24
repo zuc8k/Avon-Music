@@ -1,0 +1,14 @@
+{
+  "name": "luna-music-bot",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "discord-player": "^6.6.3",
+    "@discordjs/voice": "^0.16.1",
+    "dotenv": "^16.4.5"
+  }
+}
