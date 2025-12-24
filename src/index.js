@@ -6,6 +6,7 @@ require("./handlers/slashHandler")(client);
 require("./handlers/prefixHandler")(client);
 require("./handlers/interactionHandler")(client);
 require("./handlers/buttonHandler")(client);
+require("./handlers/helpMenuHandler")(client);
 
 // Player Events
 require("./player/events")(client);
