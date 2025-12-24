@@ -17,7 +17,9 @@ module.exports = {
     subs.addPrime(guildId, expiresAt);
 
     message.reply(
-      `✅ تم إضافة Prime للسيرفر\n🗓️ ينتهي في: <t:${Math.floor(expiresAt / 1000)}:F>`
+      `✅ تم إضافة Prime للسيرفر\n🗓️ ينتهي في: <t:${Math.floor(
+        expiresAt / 1000
+      )}:F>`
     );
   }
 };
