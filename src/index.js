@@ -10,8 +10,11 @@ require("./handlers/buttonHandler")(client);
 // Player Events
 require("./player/events")(client);
 
-// Auto UI Update (Progress Bar)
+// UI Auto Update
 require("./player/autoUpdate")(client);
+
+// Prime Auto Expire
+require("./premium/autoExpire")(client);
 
 client.once("ready", () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
