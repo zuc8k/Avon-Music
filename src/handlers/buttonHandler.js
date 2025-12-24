@@ -1,4 +1,5 @@
 const controls = require("../player/controls");
+const queueEmbed = require("../player/queueEmbed");
 
 const MAP = {
   music_pause: controls.pause,
@@ -15,12 +16,30 @@ module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
     if (!interaction.isButton()) return;
 
+    const queue = client.player.nodes.get(interaction.guild.id);
+
+    if (interaction.customId === "music_queue") {
+      if (!queue)
+        return interaction.reply({
+          content: "📭 الـ Queue فاضية",
+          ephemeral: true
+        });
+
+      return interaction.reply({
+        embeds: [queueEmbed(queue)],
+        ephemeral: true
+      });
+    }
+
     const action = MAP[interaction.customId];
     if (!action) return;
 
-    const queue = client.player.nodes.get(interaction.guild.id);
-
-    if (!controls.ensureQueue(queue, interaction)) return;
+    if (!queue) {
+      return interaction.reply({
+        content: "❌ مفيش ميوزك شغالة",
+        ephemeral: true
+      });
+    }
 
     try {
       action(queue);
