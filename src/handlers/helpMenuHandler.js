@@ -5,32 +5,40 @@ module.exports = (client) => {
     if (!interaction.isStringSelectMenu()) return;
     if (interaction.customId !== "help_menu") return;
 
-    let embed = new EmbedBuilder().setColor(0x5865F2);
+    const embed = new EmbedBuilder().setColor(0x5865F2);
 
-    if (interaction.values[0] === "music") {
-      embed
-        .setTitle("🎵 Music Commands")
-        .setDescription(
-          "`play` `pause` `resume` `skip` `stop`\n" +
-          "`queue` `loop` `shuffle` `seek`\n" +
-          "`lyrics` `autoplay`"
-        );
-    }
+    switch (interaction.values[0]) {
+      case "music":
+        embed
+          .setTitle("🎵 Music Commands")
+          .setDescription(
+            "**تشغيل وتحكم:**\n" +
+            "`play` `pause` `resume` `skip` `stop`\n\n" +
+            "**Queue & Control:**\n" +
+            "`queue` `loop` `shuffle` `seek`\n\n" +
+            "**Extra:**\n" +
+            "`lyrics` `autoplay`"
+          );
+        break;
 
-    if (interaction.values[0] === "admin") {
-      embed
-        .setTitle("🛠️ Admin Commands")
-        .setDescription(
-          "`setup` `reset`"
-        );
-    }
+      case "admin":
+        embed
+          .setTitle("🛠️ Admin Commands")
+          .setDescription(
+            "`setup`\n" +
+            "`resetpanel`\n" +
+            "`setprefix`\n" +
+            "`defaultvolume`"
+          );
+        break;
 
-    if (interaction.values[0] === "utility") {
-      embed
-        .setTitle("⚙️ Utility Commands")
-        .setDescription(
-          "`help` `ping`"
-        );
+      case "utility":
+        embed
+          .setTitle("⚙️ Utility Commands")
+          .setDescription(
+            "`help`"
+          );
+        break;
     }
 
     interaction.update({
