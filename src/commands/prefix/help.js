@@ -1,0 +1,31 @@
+const {
+  ActionRowBuilder,
+  StringSelectMenuBuilder,
+  EmbedBuilder
+} = require("discord.js");
+
+module.exports = {
+  name: "help",
+  async execute(message) {
+    const embed = new EmbedBuilder()
+      .setColor(0x5865F2)
+      .setTitle("📖 Help Menu")
+      .setDescription("اختار قسم من القائمة 👇");
+
+    const menu = new StringSelectMenuBuilder()
+      .setCustomId("help_menu")
+      .setPlaceholder("Select Category")
+      .addOptions([
+        { label: "Music", value: "music", emoji: "🎵" },
+        { label: "Admin", value: "admin", emoji: "🛠️" },
+        { label: "Utility", value: "utility", emoji: "⚙️" }
+      ]);
+
+    const row = new ActionRowBuilder().addComponents(menu);
+
+    message.reply({
+      embeds: [embed],
+      components: [row]
+    });
+  }
+};
