@@ -5,30 +5,48 @@ const {
   ButtonStyle
 } = require("discord.js");
 
-function baseEmbed() {
-  return new EmbedBuilder()
-    .setColor(0x2b2d31)
-    .setFooter({ text: "Music Control Panel" });
-}
+const { formatBar } = require("./progress");
 
 function createNowPlayingEmbed(track, queue) {
-  if (!track) {
-    return baseEmbed()
+  const embed = new EmbedBuilder()
+    .setColor(0x2b2d31)
+    .setFooter({ text: "Music Control Panel" });
+
+  if (!track || !queue) {
+    return embed
       .setTitle("🎵 Now Playing")
       .setDescription("لا يوجد تشغيل حاليًا\nاستخدم /play أو !play");
   }
 
-  return baseEmbed()
+  const current = queue.node.getTimestamp()?.current?.value || 0;
+  const total = queue.node.getTimestamp()?.total?.value || 0;
+
+  embed
     .setTitle("🎶 Now Playing")
     .setDescription(`**${track.title}**`)
-    .addFields(
-      { name: "⏱️ Duration", value: track.duration, inline: true },
-      { name: "👤 Requested by", value: track.requestedBy.username, inline: true }
-    )
     .setThumbnail(track.thumbnail)
+    .addFields(
+      {
+        name: "⏱️ Duration",
+        value: track.duration,
+        inline: true
+      },
+      {
+        name: "👤 Requested by",
+        value: track.requestedBy.username,
+        inline: true
+      },
+      {
+        name: "▶ Progress",
+        value: formatBar(current, total),
+        inline: false
+      }
+    )
     .setFooter({
       text: `Volume: ${queue.node.volume}% | Loop: ${queue.repeatMode ? "On" : "Off"}`
     });
+
+  return embed;
 }
 
 function createControlButtons() {
@@ -43,7 +61,8 @@ function createControlButtons() {
   const row2 = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId("music_shuffle").setEmoji("🔀").setStyle(ButtonStyle.Secondary),
     new ButtonBuilder().setCustomId("music_vol_down").setEmoji("🔉").setStyle(ButtonStyle.Secondary),
-    new ButtonBuilder().setCustomId("music_vol_up").setEmoji("🔊").setStyle(ButtonStyle.Secondary)
+    new ButtonBuilder().setCustomId("music_vol_up").setEmoji("🔊").setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder().setCustomId("music_queue").setEmoji("📜").setStyle(ButtonStyle.Secondary)
   );
 
   return [row1, row2];
