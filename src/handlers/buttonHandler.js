@@ -1,16 +1,6 @@
-const controls = require("../player/controls");
+const ux = require("../utils/ux");
 const queueEmbed = require("../player/queueEmbed");
-
-const MAP = {
-  music_pause: controls.pause,
-  music_skip: controls.skip,
-  music_stop: controls.stop,
-  music_back: controls.back,
-  music_loop: controls.loop,
-  music_shuffle: controls.shuffle,
-  music_vol_up: controls.volUp,
-  music_vol_down: controls.volDown
-};
+const controls = require("../player/controls");
 
 module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
@@ -18,12 +8,14 @@ module.exports = (client) => {
 
     const queue = client.player.nodes.get(interaction.guild.id);
 
+    // زر Queue
     if (interaction.customId === "music_queue") {
-      if (!queue)
+      if (!queue) {
         return interaction.reply({
-          content: "📭 الـ Queue فاضية",
+          embeds: [ux.info("📭 الكيو فاضية")],
           ephemeral: true
         });
+      }
 
       return interaction.reply({
         embeds: [queueEmbed(queue)],
@@ -31,23 +23,95 @@ module.exports = (client) => {
       });
     }
 
-    const action = MAP[interaction.customId];
-    if (!action) return;
-
+    // باقي الأزرار
     if (!queue) {
       return interaction.reply({
-        content: "❌ مفيش ميوزك شغالة",
+        embeds: [ux.error("مفيش ميوزك شغالة")],
         ephemeral: true
       });
     }
 
     try {
-      action(queue);
-      await interaction.deferUpdate();
+      switch (interaction.customId) {
+        case "music_pause":
+          queue.node.isPaused()
+            ? queue.node.resume()
+            : queue.node.pause();
+          return interaction.reply({
+            embeds: [
+              ux.success(
+                queue.node.isPaused()
+                  ? "تم الإيقاف المؤقت ⏸️"
+                  : "كملت التشغيل ▶️"
+              )
+            ],
+            ephemeral: true
+          });
+
+        case "music_skip":
+          queue.node.skip();
+          return interaction.reply({
+            embeds: [ux.success("تم تخطي الأغنية ⏭️")],
+            ephemeral: true
+          });
+
+        case "music_stop":
+          queue.delete();
+          return interaction.reply({
+            embeds: [ux.success("تم إيقاف الميوزك ⏹️")],
+            ephemeral: true
+          });
+
+        case "music_back":
+          queue.history.back();
+          return interaction.reply({
+            embeds: [ux.success("رجعت للأغنية اللي قبلها ⏮️")],
+            ephemeral: true
+          });
+
+        case "music_loop":
+          queue.setRepeatMode(queue.repeatMode === 0 ? 1 : 0);
+          return interaction.reply({
+            embeds: [
+              ux.success(
+                queue.repeatMode ? "Loop شغال 🔁" : "Loop اتقفل"
+              )
+            ],
+            ephemeral: true
+          });
+
+        case "music_shuffle":
+          queue.tracks.shuffle();
+          return interaction.reply({
+            embeds: [ux.success("تم خلط الكيو 🔀")],
+            ephemeral: true
+          });
+
+        case "music_vol_up":
+          queue.node.setVolume(
+            Math.min(queue.node.volume + 10, 100)
+          );
+          return interaction.reply({
+            embeds: [ux.success("🔊 زوّدنا الصوت")],
+            ephemeral: true
+          });
+
+        case "music_vol_down":
+          queue.node.setVolume(
+            Math.max(queue.node.volume - 10, 0)
+          );
+          return interaction.reply({
+            embeds: [ux.success("🔉 قللنا الصوت")],
+            ephemeral: true
+          });
+
+        default:
+          return;
+      }
     } catch (err) {
       console.error(err);
-      interaction.reply({
-        content: "❌ حصل خطأ",
+      return interaction.reply({
+        embeds: [ux.error("حصل خطأ غير متوقع")],
         ephemeral: true
       });
     }
