@@ -6,10 +6,11 @@ const {
 } = require("discord.js");
 
 const { formatBar } = require("./progress");
+const getStatus = require("./status");
 
 function createNowPlayingEmbed(track, queue) {
   const embed = new EmbedBuilder()
-    .setColor(0x2b2d31)
+    .setColor(0x5865F2)
     .setFooter({ text: "Music Control Panel" });
 
   if (!track || !queue) {
@@ -18,32 +19,21 @@ function createNowPlayingEmbed(track, queue) {
       .setDescription("لا يوجد تشغيل حاليًا\nاستخدم /play أو !play");
   }
 
-  const current = queue.node.getTimestamp()?.current?.value || 0;
-  const total = queue.node.getTimestamp()?.total?.value || 0;
+  const timestamp = queue.node.getTimestamp();
+  const current = timestamp?.current?.value || 0;
+  const total = timestamp?.total?.value || 0;
 
   embed
-    .setTitle("🎶 Now Playing")
-    .setDescription(`**${track.title}**`)
+    .setTitle(`${getStatus(queue)} | Now Playing`)
+    .setDescription(`🎧 **${track.title}**`)
     .setThumbnail(track.thumbnail)
     .addFields(
-      {
-        name: "⏱️ Duration",
-        value: track.duration,
-        inline: true
-      },
-      {
-        name: "👤 Requested by",
-        value: track.requestedBy.username,
-        inline: true
-      },
-      {
-        name: "▶ Progress",
-        value: formatBar(current, total),
-        inline: false
-      }
+      { name: "⏱️ المدة", value: track.duration, inline: true },
+      { name: "👤 بواسطة", value: track.requestedBy.username, inline: true },
+      { name: "📊 التقدم", value: formatBar(current, total), inline: false }
     )
     .setFooter({
-      text: `Volume: ${queue.node.volume}% | Loop: ${queue.repeatMode ? "On" : "Off"}`
+      text: `🔊 ${queue.node.volume}% | 🔁 ${queue.repeatMode ? "On" : "Off"}`
     });
 
   return embed;
