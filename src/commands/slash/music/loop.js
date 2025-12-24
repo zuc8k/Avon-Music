@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
+const ux = require("../../../utils/ux");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -18,12 +19,12 @@ module.exports = {
   async execute(interaction, client) {
     const queue = client.player.nodes.get(interaction.guild.id);
     if (!queue)
-      return interaction.reply({ content: "❌ مفيش ميوزك شغالة", ephemeral: true });
+      return interaction.reply({ embeds: [ux.error("مفيش ميوزك شغالة")], ephemeral: true });
 
-    const mode = interaction.options.getString("mode");
     const map = { off: 0, track: 1, queue: 2 };
-
+    const mode = interaction.options.getString("mode");
     queue.setRepeatMode(map[mode]);
-    interaction.reply(`🔁 Loop: **${mode}**`);
+
+    interaction.reply({ embeds: [ux.success(`Loop: **${mode}** 🔁`)] });
   }
 };
